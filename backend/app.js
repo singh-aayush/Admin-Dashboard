@@ -14,9 +14,14 @@ const app = express();
 app.use(express.json());
 app.use(morgan('dev'));
 app.use(cors({
-  origin: process.env.FRONTEND_ORIGIN || 'http://localhost:3000',
+  origin: [
+    'http://localhost:5173', // ✅ Local dev (Vite)
+    'http://localhost:3000', // Optional if you sometimes run CRA or other ports
+    'https://your-frontend-domain.com' // ✅ Replace with your deployed frontend URL
+  ],
   credentials: true
 }));
+
 
 // routes
 app.use('/api/auth', authRoutes);
