@@ -1,0 +1,158 @@
+/* simple, minimal styles - adjust to taste */
+:root {
+  --bg: #0f1720;
+  --card: #0b1220;
+  --muted: #9aa5b1;
+  --accent: #2b6cb0;
+  --danger: #c53030;
+  --text: #e6eef6;
+}
+
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  font-family: Inter, system-ui, Arial;
+  background: #f3f5f8;
+  color: #111;
+}
+
+.app-root {
+  display: flex;
+  min-height: 100vh;
+}
+.sidebar {
+  width: 220px;
+  background: #ffffff;
+  border-right: 1px solid #e6ecf1;
+  padding: 16px;
+}
+.brand {
+  margin: 0 0 12px;
+  font-size: 18px;
+}
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.sidebar a {
+  color: #0a2540;
+  text-decoration: none;
+  display: block;
+  padding: 8px 6px;
+  border-radius: 4px;
+}
+.sidebar a.active {
+  background: #eef6ff;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background: #f8fafc;
+  border-bottom: 1px solid #eee;
+}
+.main-content {
+  padding: 20px;
+}
+
+.card {
+  background: white;
+  padding: 16px;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  margin-bottom: 12px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.table th,
+.table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.btn {
+  background: #2563eb;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.btn.ghost {
+  background: #f3f4f6;
+  color: #111;
+}
+.btn-sm {
+  padding: 6px 8px;
+  margin-right: 6px;
+}
+.btn-sm.danger,
+.btn.danger {
+  background: #e53e3e;
+}
+.error {
+  color: red;
+  margin-bottom: 8px;
+}
+
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+.login-card {
+  width: 320px;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+}
+.modal {
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  min-width: 300px;
+  position: relative;
+}
+.modal-close {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.small {
+  padding: 8px;
+}
+.logs {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
