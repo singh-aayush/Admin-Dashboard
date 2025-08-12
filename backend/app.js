@@ -16,7 +16,7 @@ app.use(morgan('dev'));
 const allowedOrigins = process.env.FRONTEND_ORIGIN?.split(",") || [];
 
 app.use(cors({
-  origin: allowedOrigins || 'https://admin-dashboard-frontend-ivory.vercel.app',
+  origin: allowedOrigins || 'https://admin-dashboard-frontend-ivory.vercel.app', 
   credentials: true
 }));
 
