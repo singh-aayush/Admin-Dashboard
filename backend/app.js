@@ -13,12 +13,13 @@ const app = express();
 // middlewares
 app.use(express.json());
 app.use(morgan('dev'));
+const allowedOrigins = process.env.FRONTEND_ORIGIN?.split(",") || [];
+
 app.use(cors({
-  origin: [
-    'http://localhost:5173'
-  ],
+  origin: allowedOrigins,
   credentials: true
 }));
+
 
 
 // routes
