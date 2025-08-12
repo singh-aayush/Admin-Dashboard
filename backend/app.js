@@ -15,9 +15,7 @@ app.use(express.json());
 app.use(morgan('dev'));
 app.use(cors({
   origin: [
-    'http://localhost:5173', // ✅ Local dev (Vite)
-    'http://localhost:3000', // Optional if you sometimes run CRA or other ports
-    'https://your-frontend-domain.com' // ✅ Replace with your deployed frontend URL
+    'http://localhost:5173'
   ],
   credentials: true
 }));
