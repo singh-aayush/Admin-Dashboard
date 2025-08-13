@@ -18,7 +18,7 @@ app.use(morgan('dev'));
 
 const allowedOrigins = [
   "https://admin-dashboard-frontend-one.vercel.app/",
-  "https://32qhk5-5173.csb.app"
+  "https://32qhk5-5173.csb.app/"
 ];
 
 app.use(
