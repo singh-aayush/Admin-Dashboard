@@ -56,22 +56,22 @@ npm run dev
 
 ## Features
 
-# - User Authentication (JWT-based)
-# - Viewer and Editor/Admin roles
-# - View History (Admin only)
-# - Post Management (Admin/Editor)
-# - Responsive Design (Desktop & Mobile)
+- User Authentication (JWT-based)
+ - Viewer and Editor/Admin roles
+ - View History (Admin only)
+ - Post Management (Admin/Editor)
+ - Responsive Design (Desktop & Mobile)
 
 ---
 
 ## Notes
 
-# - Make sure MongoDB is running locally or use a cloud MongoDB instance.
-# - Frontend is configured to connect to backend via Axios. Update the API base URL in `frontend/src/api/api.js` if needed.
-# - Editor/Admin accounts can manage all posts (create, edit, delete).
+ - Make sure MongoDB is running locally or use a cloud MongoDB instance.
+ - Frontend is configured to connect to backend via Axios. Update the API base URL in `frontend/src/api/api.js` if needed.
+ - Editor/Admin accounts can manage all posts (create, edit, delete).
 
 ---
 
 ## Contact
 
-# For any questions or issues, contact Aayush Singh at ayush2002si@gmail.com
+ For any questions or issues, contact Aayush Singh at ayush2002si@gmail.com
