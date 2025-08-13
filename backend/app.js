@@ -16,7 +16,7 @@ const app = express();
 app.use(express.json());
 app.use(morgan('dev'));
 
-const allowedOrigins = process.env.FRONTEND_ORIGIN?.split(",") || [];
+const allowedOrigins = process.env.FRONTEND_ORIGIN?.split(",") || 'https://admin-dashboard-frontend-ivory.vercel.app';
 
 app.use(cors({
   origin: function(origin, callback) {
