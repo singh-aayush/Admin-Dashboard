@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import api from "../api/api";
 
 const Dashboard = () => {
   const { user } = useAuth();
-
-  const [logs, setLogs] = useState([]);
-  const [loadingLogs, setLoadingLogs] = useState(true);
-  const [error, setError] = useState(null);
-  const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
 
   const [stats, setStats] = useState({
     totalUsers: 0,
@@ -17,205 +14,216 @@ const Dashboard = () => {
     adminData: null,
   });
 
-  const PREVIEW_LIMIT = 5;
-
-  // Fetch quick stats
-  const fetchStats = async () => {
-    try {
-      const [usersRes, postsRes, meRes, logsRes] = await Promise.all([
-        api.get("/api/users"),
-        api.get("/api/posts"),
-        api.get("/api/auth/me"),
-        api.get("/api/history"),
-      ]);
-
-      const deletedPostsCount = (logsRes.data.logs || []).filter(
-        (log) => log.action === "post.delete"
-      ).length;
-
-      setStats({
-        totalUsers: usersRes.data.users?.length || 0,
-        totalPosts: postsRes.data.posts?.length || 0,
-        deletedPosts: deletedPostsCount,
-        adminData: meRes.data.user || null,
-      });
-    } catch (err) {
-      console.error("Failed to fetch stats:", err);
-    }
-  };
-
-  // Fetch recent activity logs
-  const fetchLogs = async () => {
-    try {
-      const res = await api.get("/api/history");
-      setLogs(res.data.logs || []);
-    } catch (err) {
-      console.error("Error fetching logs:", err);
-      setError("Failed to load recent activity");
-    } finally {
-      setLoadingLogs(false);
-    }
-  };
-
+  // Fetch stats only for admin
   useEffect(() => {
-    fetchStats();
-    fetchLogs();
-  }, []);
+    if (user?.role === "admin") {
+      const fetchStats = async () => {
+        try {
+          const [usersRes, postsRes, meRes, logsRes] = await Promise.all([
+            api.get("/api/users"),
+            api.get("/api/posts"),
+            api.get("/api/auth/me"),
+            api.get("/api/history"),
+          ]);
+
+          const deletedPostsCount = (logsRes.data.logs || []).filter(
+            (log) => log.action === "post.delete"
+          ).length;
+
+          setStats({
+            totalUsers: usersRes.data.users?.length || 0,
+            totalPosts: postsRes.data.posts?.length || 0,
+            deletedPosts: deletedPostsCount,
+            adminData: meRes.data.user || null,
+          });
+        } catch (err) {
+          console.error("Failed to fetch stats:", err);
+        }
+      };
+      fetchStats();
+    }
+  }, [user?.role]);
 
   return (
-    <div className="page">
-      <h1>Dashboard</h1>
+    <div style={styles.page}>
+      <h1 style={styles.title}>Dashboard</h1>
       <p>
         Role: <strong>{user?.role}</strong>
       </p>
 
-      {/* Quick Stats */}
-      <div className="grid" style={{ marginBottom: "20px" }}>
-        <div className="card">
-          <h3>Total Users</h3>
-          <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
-            {stats.totalUsers}
-          </p>
-        </div>
-        <div className="card">
-          <h3>Total Posts</h3>
-          <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
-            {stats.totalPosts}
-          </p>
-        </div>
-        <div className="card">
-          <h3>Deleted Posts</h3>
-          <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
-            {stats.deletedPosts}
-          </p>
-        </div>
-        <div className="card">
-          <h3>Logged In Admin</h3>
-          {stats.adminData ? (
-            <>
-              <p>{stats.adminData.fullName}</p>
-              <small>{stats.adminData.email}</small>
-            </>
-          ) : (
-            <p>Loading...</p>
-          )}
-        </div>
-      </div>
-
-      {/* Recent activity */}
-      <div className="grid">
-        <div className="card" style={{ gridColumn: "1 / -1" }}>
-          <h3>Recent activity</h3>
-          {loadingLogs ? (
-            <p>Loading...</p>
-          ) : error ? (
-            <p className="error">{error}</p>
-          ) : logs.length === 0 ? (
-            <p>No recent activity</p>
-          ) : (
-            <>
-              <ul>
-                {logs.slice(0, PREVIEW_LIMIT).map((log) => (
-                  <li key={log._id}>
-                    <strong>{log.action}</strong> — {log.details}
-                    <br />
-                    <small>
-                      by {log.actor?.fullName} ({log.actor?.email}) on{" "}
-                      {new Date(log.createdAt).toLocaleString()}
-                    </small>
-                  </li>
-                ))}
-              </ul>
-              {logs.length > PREVIEW_LIMIT && (
-                <button
-                  className="btn"
-                  style={{ marginTop: "10px" }}
-                  onClick={() => setShowModal(true)}
-                >
-                  View More
-                </button>
-              )}
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* Modal for all activity */}
-      {showModal && (
-        <div style={modalOverlayStyle}>
-          <div style={modalStyle}>
-            <h2>All Activities</h2>
-            <button style={closeBtnStyle} onClick={() => setShowModal(false)}>
-              ✖
-            </button>
-            <div style={{ maxHeight: "60vh", overflowY: "auto" }}>
-              <ul>
-                {logs.map((log) => (
-                  <li
-                    key={log._id}
-                    style={{
-                      padding: "8px 0",
-                      borderBottom: "1px solid #ddd",
-                    }}
-                  >
-                    <div>
-                      <strong>
-                        {new Date(log.createdAt).toLocaleString()}
-                      </strong>{" "}
-                      —{" "}
-                      <span style={{ textTransform: "capitalize" }}>
-                        {log.action.replace(".", " ")}
-                      </span>
-                    </div>
-                    <div>
-                      <strong>Actor:</strong> {log.actor.fullName} (
-                      {log.actor.email}, role: {log.actor.role})
-                    </div>
-                    <div>
-                      <strong>Details:</strong> {log.details}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
+      {/* Admin view */}
+      {user?.role === "admin" && (
+        <>
+          <div style={styles.statsGrid}>
+            <StatCard
+              title="Total Users"
+              value={stats.totalUsers}
+              color="#2D9CDB"
+            />
+            <StatCard
+              title="Total Posts"
+              value={stats.totalPosts}
+              color="#27AE60"
+            />
+            <StatCard
+              title="Deleted Posts"
+              value={stats.deletedPosts}
+              color="#F2994A"
+            />
+            <StatCard
+              title="Logged In Admin"
+              value={stats.adminData?.fullName || "Loading..."}
+              subValue={stats.adminData?.email}
+              color="#9B51E0"
+            />
           </div>
+          <AdminRecentActivity />
+        </>
+      )}
+
+      {/* Editor / Viewer view */}
+      {(user?.role === "editor" || user?.role === "viewer") && (
+        <div style={styles.buttonsWrapper}>
+          {user?.role === "editor" && (
+            <button
+              style={{ ...styles.btn, ...styles.btnPrimary }}
+              onClick={() => navigate("/editor")}
+            >
+              Editor Content
+            </button>
+          )}
+          <button
+            style={{ ...styles.btn, ...styles.btnPrimary }}
+            onClick={() => navigate("/viewer")}
+          >
+            Viewer Content
+          </button>
         </div>
       )}
     </div>
   );
 };
 
-/* Modal styles */
-const modalOverlayStyle = {
-  position: "fixed",
-  top: 0,
-  left: 0,
-  width: "100vw",
-  height: "100vh",
-  backgroundColor: "rgba(0,0,0,0.6)",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  zIndex: 9999,
+// Admin recent activity component
+const AdminRecentActivity = () => {
+  const [logs, setLogs] = useState([]);
+  const [loadingLogs, setLoadingLogs] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchLogs = async () => {
+      try {
+        const res = await api.get("/api/history");
+        setLogs(res.data.logs || []);
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load recent activity");
+      } finally {
+        setLoadingLogs(false);
+      }
+    };
+    fetchLogs();
+  }, []);
+
+  if (loadingLogs) return <p>Loading activity...</p>;
+  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  if (logs.length === 0) return <p>No recent activity</p>;
+
+  return (
+    <div style={{ marginTop: 30 }}>
+      <h2>Recent Activity</h2>
+      <ul style={styles.activityList}>
+        {logs.slice(0, 5).map((log) => (
+          <li key={log._id} style={styles.activityItem}>
+            <span>{log.actor?.fullName || "Unknown"} — </span>
+            <strong>{log.action.replace(".", " ")}</strong>
+            <br />
+            <small>{new Date(log.createdAt).toLocaleString()}</small>
+          </li>
+        ))}
+      </ul>
+      {logs.length > 5 && (
+        <button
+          style={styles.viewMoreBtn}
+          onClick={() => window.location.assign("/admin/logs")}
+        >
+          View More
+        </button>
+      )}
+    </div>
+  );
 };
 
-const modalStyle = {
-  background: "#fff",
-  padding: "20px",
-  borderRadius: "8px",
-  width: "600px",
-  maxWidth: "90%",
-  position: "relative",
-};
+const StatCard = ({ title, value, subValue, color }) => (
+  <div style={{ ...styles.card, borderColor: color }}>
+    <h3 style={{ color }}>{title}</h3>
+    <p style={{ fontSize: 24, fontWeight: "bold", margin: 0 }}>{value}</p>
+    {subValue && <small>{subValue}</small>}
+  </div>
+);
 
-const closeBtnStyle = {
-  position: "absolute",
-  top: "8px",
-  right: "8px",
-  background: "transparent",
-  border: "none",
-  fontSize: "18px",
-  cursor: "pointer",
+const styles = {
+  page: {
+    width: "100%",
+    margin: "0 auto",
+    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+    backgroundColor: "#f8f9fa",
+    minHeight: "calc(100vh - 50px)",
+    padding: 30,
+  },
+  title: { marginBottom: 20 },
+  statsGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+    gap: 20,
+  },
+  card: {
+    border: "2px solid",
+    borderRadius: 8,
+    padding: 20,
+    backgroundColor: "#fff",
+    boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+  },
+  activityList: { listStyle: "none", padding: 0 },
+  activityItem: {
+    backgroundColor: "#fff",
+    marginBottom: 10,
+    padding: 12,
+    borderRadius: 6,
+    boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+    wordBreak: "break-word",
+  },
+  viewMoreBtn: {
+    marginTop: 10,
+    backgroundColor: "#4a90e2",
+    color: "#fff",
+    border: "none",
+    borderRadius: 6,
+    padding: "10px 20px",
+    cursor: "pointer",
+    fontWeight: "bold",
+  },
+  buttonsWrapper: {
+    display: "flex",
+    gap: 15,
+    flexWrap: "wrap",
+    marginTop: 50,
+    justifyContent: "center",
+  },
+  btn: {
+    padding: "12px 24px",
+    borderRadius: 6,
+    border: "none",
+    cursor: "pointer",
+    fontWeight: "bold",
+    fontSize: 16,
+    transition: "all 0.25s ease",
+  },
+  btnPrimary: {
+    backgroundColor: "#4a90e2",
+    color: "#fff",
+    boxShadow: "0 4px 6px rgba(74,144,226,0.4)",
+  },
 };
 
 export default Dashboard;

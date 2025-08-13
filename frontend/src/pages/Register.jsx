@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../api/api";
-import { useAuth } from "../context/AuthContext";
 import "../styles/Auth.css";
 
-const Login = () => {
-  const { setUserFromLogin } = useAuth();
+const Register = () => {
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("viewer");
   const [err, setErr] = useState(null);
   const nav = useNavigate();
 
@@ -16,20 +16,18 @@ const Login = () => {
     setErr(null);
 
     try {
-      const res = await api.post("/api/auth/login", { email, password });
-      const { user, token } = res.data;
-
-      if (!token) throw new Error("No token returned from API");
-
-      // Pass both user and token to context so it can store both
-      setUserFromLogin(user, token);
-
-      nav("/");
+      await api.post("/api/auth/register", {
+        fullName,
+        email,
+        password,
+        role,
+      });
+      nav("/login");
     } catch (e) {
       setErr(
         e?.response?.data?.message ||
           e.message ||
-          "Login failed. Please check your credentials."
+          "Registration failed. Please try again."
       );
     }
   };
@@ -37,9 +35,18 @@ const Login = () => {
   return (
     <div className="auth-container">
       <form className="auth-card" onSubmit={submit}>
-        <h2 className="auth-title">Login to Your Account</h2>
+        <h2 className="auth-title">Create an Account</h2>
 
         {err && <div className="auth-error">{err}</div>}
+
+        <label>Full Name</label>
+        <input
+          type="text"
+          placeholder="Enter your full name"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          required
+        />
 
         <label>Email</label>
         <input
@@ -59,16 +66,23 @@ const Login = () => {
           required
         />
 
+        <label>Role</label>
+        <select value={role} onChange={(e) => setRole(e.target.value)}>
+          <option value="admin">Admin</option>
+          <option value="editor">Editor</option>
+          <option value="viewer">Viewer</option>
+        </select>
+
         <button type="submit" className="auth-btn">
-          Login
+          Register
         </button>
 
         <p className="auth-switch">
-          Don’t have an account? <Link to="/register">Register</Link>
+          Already have an account? <Link to="/login">Login</Link>
         </p>
       </form>
     </div>
   );
 };
 
-export default Login;
+export default Register;

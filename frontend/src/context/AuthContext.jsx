@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
 import { jwtDecode } from "jwt-decode";
+import api from "../api/api";
 
 const AuthContext = createContext();
 
@@ -9,27 +10,43 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+
     if (token) {
       try {
         const decoded = jwtDecode(token);
-        setUser({
-          id: decoded.id || decoded._id,
-          name: decoded.name || decoded.fullName,
-          email: decoded.email,
-          role: decoded.role || "viewer",
-        });
-      } catch (err) {
-        console.error("Invalid token:", err);
+        if (decoded.exp && Date.now() >= decoded.exp * 1000) {
+          throw new Error("Token expired");
+        }
+
+        // Fetch user info from backend
+        api
+          .get("/api/auth/me")
+          .then((res) => {
+            setUser(res.data.user);
+          })
+          .catch(() => {
+            localStorage.removeItem("token");
+            setUser(null);
+          })
+          .finally(() => setLoading(false));
+      } catch {
         localStorage.removeItem("token");
+        setUser(null);
+        setLoading(false);
       }
+    } else {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
 
-  const setUserFromLogin = (userObj) => {
+  // Called on successful login with user info and token
+  const setUserFromLogin = (userObj, token) => {
+    if (token) {
+      localStorage.setItem("token", token);
+    }
     setUser({
       id: userObj.id || userObj._id,
-      name: userObj.fullName || userObj.username,
+      name: userObj.fullName || userObj.username || userObj.name,
       email: userObj.email,
       role: userObj.role || "viewer",
     });

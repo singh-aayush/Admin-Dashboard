@@ -4,10 +4,10 @@ import { AuthProvider } from "../src/context/AuthContext";
 
 import ProtectedRoute from "../src/components/ProtectedRoute";
 import RoleGuard from "../src/components/RoleGaurd";
-import Sidebar from "../src/components/Sidebar";
-import Header from "../src/components/Header";
+import Layout from "../src/components/Layout";
 
 import Login from "../src/pages/Login";
+import Register from "../src/pages/Register";
 import Dashboard from "../src/pages/Dashboard";
 import AdminUsers from "../src/pages/AdminUser";
 import AdminLogs from "../src/pages/AdminLogs";
@@ -16,32 +16,21 @@ import ViewerContent from "../src/pages/ViewerContent";
 
 import "./styles/app.css";
 
-function AppShell({ children }) {
-  return (
-    <div className="app-root">
-      <Sidebar />
-      <main className="main">
-        <Header />
-        <div className="main-content">{children}</div>
-      </main>
-    </div>
-  );
-}
-
 export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
           <Route
             path="/"
             element={
               <ProtectedRoute>
-                <AppShell>
+                <Layout>
                   <Dashboard />
-                </AppShell>
+                </Layout>
               </ProtectedRoute>
             }
           />
@@ -51,9 +40,9 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <RoleGuard roles={["admin"]}>
-                  <AppShell>
+                  <Layout>
                     <AdminUsers />
-                  </AppShell>
+                  </Layout>
                 </RoleGuard>
               </ProtectedRoute>
             }
@@ -64,9 +53,9 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <RoleGuard roles={["admin"]}>
-                  <AppShell>
+                  <Layout>
                     <AdminLogs />
-                  </AppShell>
+                  </Layout>
                 </RoleGuard>
               </ProtectedRoute>
             }
@@ -77,9 +66,9 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <RoleGuard roles={["editor", "admin"]}>
-                  <AppShell>
+                  <Layout>
                     <EditorContent />
-                  </AppShell>
+                  </Layout>
                 </RoleGuard>
               </ProtectedRoute>
             }
@@ -89,9 +78,9 @@ export default function App() {
             path="/viewer"
             element={
               <ProtectedRoute>
-                <AppShell>
+                <Layout>
                   <ViewerContent />
-                </AppShell>
+                </Layout>
               </ProtectedRoute>
             }
           />
