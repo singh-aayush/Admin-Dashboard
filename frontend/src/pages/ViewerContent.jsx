@@ -1,19 +1,31 @@
 import React, { useEffect, useState } from "react";
-import api from "../api/api"; // axios instance that adds token automatically
+import api from "../api/api";
 
-const ViewerContent = () => {
+const ViewerContent = ({ currentUser }) => {
   const [posts, setPosts] = useState([]);
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
   const [loading, setLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const [editingPostId, setEditingPostId] = useState(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editContent, setEditContent] = useState("");
+  const [editPublished, setEditPublished] = useState(false);
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
 
-  // Load all posts
+  // Check if current user is editor or admin
+  const isEditorOrAdmin =
+    currentUser?.role === "editor" || currentUser?.role === "admin";
+
+  // Load posts
   const loadPosts = async () => {
     setLoading(true);
     try {
       const res = await api.get("/api/posts");
-      setPosts(res.data.posts || []);
+      // viewers see only published posts
+      const filteredPosts = res.data.posts.filter(
+        (p) => p.published || isEditorOrAdmin
+      );
+      setPosts(filteredPosts || []);
     } catch (err) {
       console.error(err);
       alert("Failed to fetch posts.");
@@ -26,7 +38,7 @@ const ViewerContent = () => {
     loadPosts();
   }, []);
 
-  // Mobile detection
+  // Detect mobile
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     handleResize();
@@ -34,38 +46,56 @@ const ViewerContent = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Create new post
+  // Submit a new post (only editor/admin)
   const submitPost = async () => {
     if (!title.trim() || !content.trim()) {
       alert("Please fill in all fields.");
       return;
     }
-
     try {
-      const token = localStorage.getItem("token");
-      if (!token) throw new Error("You must be logged in to post.");
-
-      // Viewer always posts as published
-      await api.post(
-        "/api/posts",
-        { title, content, published: true },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
+      await api.post("/api/posts", { title, content, published: true });
       setTitle("");
       setContent("");
       await loadPosts();
     } catch (err) {
       console.error(err);
-      alert(
-        err.response?.data?.message ||
-          err.message ||
-          "Failed to create post. Make sure you are logged in."
-      );
+      alert(err.response?.data?.message || "Failed to create post.");
+    }
+  };
+
+  // Start editing post
+  const startEditing = (post) => {
+    setEditingPostId(post._id);
+    setEditTitle(post.title);
+    setEditContent(post.content);
+    setEditPublished(post.published);
+  };
+
+  // Cancel editing
+  const cancelEditing = () => {
+    setEditingPostId(null);
+    setEditTitle("");
+    setEditContent("");
+    setEditPublished(false);
+  };
+
+  // Update post
+  const updatePost = async (postId) => {
+    if (!editTitle.trim() || !editContent.trim()) {
+      alert("Please fill in all fields.");
+      return;
+    }
+    try {
+      await api.put(`/api/posts/${postId}`, {
+        title: editTitle,
+        content: editContent,
+        published: editPublished,
+      });
+      cancelEditing();
+      await loadPosts();
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || "Failed to update post.");
     }
   };
 
@@ -73,29 +103,31 @@ const ViewerContent = () => {
     <div style={styles.page}>
       <h2 style={styles.title}>Public Content</h2>
 
-      {/* Post creation form */}
-      <div style={styles.card}>
-        <input
-          style={styles.input}
-          placeholder="Post title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <textarea
-          style={styles.textarea}
-          placeholder="Post content"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-        />
-        <div style={{ textAlign: "right", marginTop: 10 }}>
-          <button
-            style={{ ...styles.btn, ...styles.btnPrimary }}
-            onClick={submitPost}
-          >
-            Create Post
-          </button>
+      {/* Only editors/admins can create posts */}
+      {isEditorOrAdmin && (
+        <div style={styles.card}>
+          <input
+            style={styles.input}
+            placeholder="Post title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          <textarea
+            style={styles.textarea}
+            placeholder="Post content"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+          />
+          <div style={{ textAlign: "right", marginTop: 10 }}>
+            <button
+              style={{ ...styles.btn, ...styles.btnPrimary }}
+              onClick={submitPost}
+            >
+              Create Post
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Posts list */}
       {loading ? (
@@ -106,12 +138,64 @@ const ViewerContent = () => {
         <div style={isMobile ? styles.cardsWrapper : styles.gridDesktop}>
           {posts.map((p) => (
             <div key={p._id} style={styles.cardSmall}>
-              <h3>{p.title}</h3>
-              <p>{p.content?.slice(0, 250)}...</p>
-              <small>
-                By {p.author?.fullName || "Unknown"} on{" "}
-                {new Date(p.createdAt).toLocaleString()}
-              </small>
+              {editingPostId === p._id ? (
+                <>
+                  <input
+                    style={styles.input}
+                    value={editTitle}
+                    onChange={(e) => setEditTitle(e.target.value)}
+                  />
+                  <textarea
+                    style={styles.textarea}
+                    value={editContent}
+                    onChange={(e) => setEditContent(e.target.value)}
+                  />
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={editPublished}
+                      onChange={(e) => setEditPublished(e.target.checked)}
+                    />{" "}
+                    Published
+                  </label>
+                  <div style={{ marginTop: 10 }}>
+                    <button
+                      style={{
+                        ...styles.btn,
+                        ...styles.btnPrimary,
+                        marginRight: 10,
+                      }}
+                      onClick={() => updatePost(p._id)}
+                    >
+                      Save
+                    </button>
+                    <button style={styles.btn} onClick={cancelEditing}>
+                      Cancel
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <h3>{p.title}</h3>
+                  <p>{p.content?.slice(0, 250)}...</p>
+                  <small>
+                    By {p.author?.fullName || "Unknown"} on{" "}
+                    {new Date(p.createdAt).toLocaleString()}
+                  </small>
+
+                  {/* Only editors/admins can edit posts */}
+                  {isEditorOrAdmin && (
+                    <div style={{ marginTop: 10 }}>
+                      <button
+                        style={styles.btn}
+                        onClick={() => startEditing(p)}
+                      >
+                        Edit
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           ))}
         </div>
@@ -163,7 +247,7 @@ const styles = {
     resize: "vertical",
   },
   btn: {
-    padding: "8px 16px",
+    padding: "6px 12px",
     borderRadius: 6,
     border: "none",
     cursor: "pointer",

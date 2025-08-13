@@ -6,6 +6,7 @@ const EditorContent = () => {
   const [editing, setEditing] = useState(null);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [published, setPublished] = useState(true); // Added for status
   const [loading, setLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -39,12 +40,14 @@ const EditorContent = () => {
     setEditing(p);
     setTitle(p.title);
     setContent(p.content);
+    setPublished(p.published); // load published status
   };
 
   const clear = () => {
     setEditing(null);
     setTitle("");
     setContent("");
+    setPublished(true);
   };
 
   const submit = async () => {
@@ -57,10 +60,10 @@ const EditorContent = () => {
         await api.put(`/api/posts/${editing._id}`, {
           title,
           content,
-          published: true,
+          published,
         });
       } else {
-        await api.post("/api/posts", { title, content });
+        await api.post("/api/posts", { title, content, published });
       }
       await load();
       clear();
@@ -83,7 +86,7 @@ const EditorContent = () => {
 
   return (
     <div style={styles.page}>
-      <h2 style={styles.title}>Manage Editor Content</h2>
+      <h2 style={styles.title}>Manage Editor/Admin Content</h2>
 
       {/* Post Form */}
       <div style={styles.card}>
@@ -99,6 +102,16 @@ const EditorContent = () => {
           value={content}
           onChange={(e) => setContent(e.target.value)}
         />
+        {editing && (
+          <label style={{ display: "block", marginTop: 10 }}>
+            <input
+              type="checkbox"
+              checked={published}
+              onChange={(e) => setPublished(e.target.checked)}
+            />{" "}
+            Published
+          </label>
+        )}
         <div style={styles.formActions}>
           <button
             style={{ ...styles.btn, ...styles.btnPrimary }}
@@ -134,6 +147,7 @@ const EditorContent = () => {
                   <tr>
                     <th style={styles.th}>Title</th>
                     <th style={styles.th}>Content</th>
+                    <th style={styles.th}>Published</th>
                     <th style={styles.th}>Author</th>
                     <th style={styles.th}>Created</th>
                     <th style={styles.th}>Actions</th>
@@ -144,6 +158,7 @@ const EditorContent = () => {
                     <tr key={p._id} style={styles.tr}>
                       <td style={styles.td}>{p.title}</td>
                       <td style={styles.td}>{p.content?.slice(0, 100)}...</td>
+                      <td style={styles.td}>{p.published ? "Yes" : "No"}</td>
                       <td style={styles.td}>{p.author?.fullName}</td>
                       <td style={styles.td}>
                         {new Date(p.createdAt).toLocaleString()}
@@ -181,7 +196,8 @@ const EditorContent = () => {
                   <h4>{p.title}</h4>
                   <p>{p.content?.slice(0, 160)}...</p>
                   <small>
-                    By {p.author?.fullName} on{" "}
+                    By {p.author?.fullName} | Published:{" "}
+                    {p.published ? "Yes" : "No"} on{" "}
                     {new Date(p.createdAt).toLocaleString()}
                   </small>
                   <div style={{ marginTop: 10, textAlign: "right" }}>
@@ -296,7 +312,7 @@ const styles = {
     verticalAlign: "top",
     color: "#444",
   },
-  cardsWrapper: { display: "flex", flexDirection: "column" },
+  cardsWrapper: { display: "flex", flexDirection: "column", gap: 15 },
   loading: { textAlign: "center", color: "#666" },
   noPosts: { textAlign: "center", color: "#999" },
 };
