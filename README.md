@@ -19,7 +19,7 @@ This is a YouTube-like video platform project with viewer and editor/admin roles
 ## Backend Setup
 
 # 1. Clone the repository and navigate to backend
-git clone <your-repo-url>
+
 cd backend
 
 # 2. Install dependencies
@@ -36,7 +36,7 @@ npm run seedAdmin
 
 # 5. Run the backend server
 npm run dev
-# Server should start at http://localhost:4000
+# Server should start at [http://localhost:4000](https://admin-dashboard-backend-file.onrender.com)
 
 ---
 
@@ -50,7 +50,7 @@ npm install
 
 # 3. Run the frontend server
 npm run dev
-# Frontend should start at http://localhost:5173
+# Frontend should start at [http://localhost:5173](https://admin-dashboard-frontend-one.vercel.app/)
 
 ---
 
