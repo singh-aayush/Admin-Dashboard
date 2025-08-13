@@ -27,16 +27,16 @@ npm install
 
 # 3. Seed the Admin user (optional but recommended)
 npm run seedAdmin
-# This will create a default admin account in MongoDB
+This will create a default admin account in MongoDB
 
 # 4. Create a `.env` file in backend root and configure
-# PORT=4000
-# MONGO_URI=<your_mongodb_connection_string>
-# JWT_SECRET=<your_jwt_secret>
+PORT=4000
+MONGO_URI=<your_mongodb_connection_string>
+JWT_SECRET=<your_jwt_secret>
 
 # 5. Run the backend server
 npm run dev
-# Server should start at [http://localhost:4000](https://admin-dashboard-backend-file.onrender.com)
+Server should start at [http://localhost:4000](https://admin-dashboard-backend-file.onrender.com)
 
 ---
 
