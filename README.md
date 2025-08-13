@@ -1,6 +1,6 @@
-# YouTube Clone Project
+# Admin Dashboard Project
 
-This is a YouTube-like video platform project with viewer and editor/admin roles. It includes features like user authentication, video publishing, watch history, and content management.
+This is a Admin Dashboard project with viewer and editor/admin roles. It includes features like user authentication, video publishing, history, and content management.
 
 ---
 
@@ -19,7 +19,7 @@ This is a YouTube-like video platform project with viewer and editor/admin roles
 ## Backend Setup
 
 # 1. Clone the repository and navigate to backend
-
+https://github.com/singh-aayush/Admin-Dashboard.git
 cd backend
 
 # 2. Install dependencies
@@ -57,10 +57,9 @@ npm run dev
 ## Features
 
 # - User Authentication (JWT-based)
-#   - Viewer and Editor/Admin roles
-# - Video Publishing
-# - Watch History
-# - Post Management
+# - Viewer and Editor/Admin roles
+# - View History (Admin only)
+# - Post Management (Admin/Editor)
 # - Responsive Design (Desktop & Mobile)
 
 ---
@@ -69,7 +68,6 @@ npm run dev
 
 # - Make sure MongoDB is running locally or use a cloud MongoDB instance.
 # - Frontend is configured to connect to backend via Axios. Update the API base URL in `frontend/src/api/api.js` if needed.
-# - Viewer accounts automatically post content as published.
 # - Editor/Admin accounts can manage all posts (create, edit, delete).
 
 ---
