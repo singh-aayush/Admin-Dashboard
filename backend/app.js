@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 const allowedOrigins = [
-  "https://admin-dashboard-frontend-ivory.vercel.app",
+  "https://admin-dashboard-frontend-one.vercel.app/",
   "https://32qhk5-5173.csb.app"
 ];
 
