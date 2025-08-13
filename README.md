@@ -1,6 +1,6 @@
-# YouTube Clone Project
+# Admin Dashboard Project
 
-This is a YouTube-like video platform project with viewer and editor/admin roles. It includes features like user authentication, video publishing, watch history, and content management.
+This is a Admin Dashboard project with viewer and editor/admin roles. It includes features like user authentication, video publishing, history, and content management.
 
 ---
 
@@ -19,7 +19,7 @@ This is a YouTube-like video platform project with viewer and editor/admin roles
 ## Backend Setup
 
 # 1. Clone the repository and navigate to backend
-git clone <your-repo-url>
+https://github.com/singh-aayush/Admin-Dashboard.git
 cd backend
 
 # 2. Install dependencies
@@ -27,16 +27,16 @@ npm install
 
 # 3. Seed the Admin user (optional but recommended)
 npm run seedAdmin
-# This will create a default admin account in MongoDB
+This will create a default admin account in MongoDB
 
 # 4. Create a `.env` file in backend root and configure
-# PORT=4000
-# MONGO_URI=<your_mongodb_connection_string>
-# JWT_SECRET=<your_jwt_secret>
+PORT=4000
+MONGO_URI=<your_mongodb_connection_string>
+JWT_SECRET=<your_jwt_secret>
 
 # 5. Run the backend server
 npm run dev
-# Server should start at http://localhost:4000
+Server should start at [http://localhost:4000](https://admin-dashboard-backend-file.onrender.com)
 
 ---
 
@@ -50,30 +50,28 @@ npm install
 
 # 3. Run the frontend server
 npm run dev
-# Frontend should start at http://localhost:5173
+# Frontend should start at [http://localhost:5173](https://admin-dashboard-frontend-one.vercel.app/)
 
 ---
 
 ## Features
 
-# - User Authentication (JWT-based)
-#   - Viewer and Editor/Admin roles
-# - Video Publishing
-# - Watch History
-# - Post Management
-# - Responsive Design (Desktop & Mobile)
+- User Authentication (JWT-based)
+ - Viewer and Editor/Admin roles
+ - View History (Admin only)
+ - Post Management (Admin/Editor)
+ - Responsive Design (Desktop & Mobile)
 
 ---
 
 ## Notes
 
-# - Make sure MongoDB is running locally or use a cloud MongoDB instance.
-# - Frontend is configured to connect to backend via Axios. Update the API base URL in `frontend/src/api/api.js` if needed.
-# - Viewer accounts automatically post content as published.
-# - Editor/Admin accounts can manage all posts (create, edit, delete).
+ - Make sure MongoDB is running locally or use a cloud MongoDB instance.
+ - Frontend is configured to connect to backend via Axios. Update the API base URL in `frontend/src/api/api.js` if needed.
+ - Editor/Admin accounts can manage all posts (create, edit, delete).
 
 ---
 
 ## Contact
 
-# For any questions or issues, contact Aayush Singh at ayush2002si@gmail.com
+ For any questions or issues, contact Aayush Singh at ayush2002si@gmail.com
