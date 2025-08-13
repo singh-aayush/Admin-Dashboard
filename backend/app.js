@@ -16,16 +16,25 @@ const app = express();
 app.use(express.json());
 app.use(morgan('dev'));
 
-const allowedOrigins = process.env.FRONTEND_ORIGIN?.split(",") || 'https://admin-dashboard-frontend-ivory.vercel.app';
+const allowedOrigins = [
+  "https://admin-dashboard-frontend-ivory.vercel.app",
+  "https://32qhk5-5173.csb.app"
+];
 
-app.use(cors({
-  origin: function(origin, callback) {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) !== -1) callback(null, true);
-    else callback(new Error(`CORS policy: Origin ${origin} is not allowed`));
-  },
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS policy: Origin ${origin} is not allowed`));
+      }
+    },
+    credentials: true,
+  })
+);
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
