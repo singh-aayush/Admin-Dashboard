@@ -104,6 +104,14 @@ const Dashboard = () => {
   );
 };
 
+const StatCard = ({ title, value, subValue, color }) => (
+  <div style={{ ...styles.card, borderColor: color }}>
+    <h3 style={{ color }}>{title}</h3>
+    <p style={{ fontSize: 24, fontWeight: "bold", margin: 0 }}>{value}</p>
+    {subValue && <small>{subValue}</small>}
+  </div>
+);
+
 // Admin recent activity component
 const AdminRecentActivity = () => {
   const [logs, setLogs] = useState([]);
@@ -154,13 +162,6 @@ const AdminRecentActivity = () => {
   );
 };
 
-const StatCard = ({ title, value, subValue, color }) => (
-  <div style={{ ...styles.card, borderColor: color }}>
-    <h3 style={{ color }}>{title}</h3>
-    <p style={{ fontSize: 24, fontWeight: "bold", margin: 0 }}>{value}</p>
-    {subValue && <small>{subValue}</small>}
-  </div>
-);
 
 const styles = {
   page: {

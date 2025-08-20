@@ -42,7 +42,7 @@ exports.updatePost = async (req, res, next) => {
     const post = await Post.findById(postId);
     if (!post) return res.status(404).json({ message: 'Post not found' });
 
-    // editors can edit any post; in extended logic you could check author
+    // editors can edit any post;
     post.title = title ?? post.title;
     post.content = content ?? post.content;
     if (published !== undefined) post.published = published;

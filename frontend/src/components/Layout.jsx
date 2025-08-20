@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 
-const HEADER_HEIGHT = 50; // px
-const SIDEBAR_WIDTH = 250; // px
+const header_height = 50; 
+const sidebar_width = 250;
 
 const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -16,10 +16,10 @@ const Layout = ({ children }) => {
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
       <main
         style={{
-          marginTop: HEADER_HEIGHT,
-          marginLeft: sidebarOpen ? SIDEBAR_WIDTH : 0,
+          marginTop: header_height,
+          marginLeft: sidebarOpen ? sidebar_width : 0,
           padding: 20,
-          minHeight: `calc(100vh - ${HEADER_HEIGHT}px)`,
+          minHeight: `calc(100vh - ${header_height}px)`,
           boxSizing: "border-box",
           transition: "margin-left 0.3s ease",
         }}
@@ -38,10 +38,10 @@ const Layout = ({ children }) => {
           }
           aside.sidebar {
             position: fixed !important;
-            top: ${HEADER_HEIGHT}px !important;  /* below header */
-            left: -${SIDEBAR_WIDTH}px !important;
-            width: ${SIDEBAR_WIDTH}px !important;
-            height: calc(100vh - ${HEADER_HEIGHT}px) !important;
+            top: ${header_height}px !important;  /* below header */
+            left: -${sidebar_width}px !important;
+            width: ${sidebar_width}px !important;
+            height: calc(100vh - ${header_height}px) !important;
             box-shadow: 2px 0 5px rgba(0,0,0,0.1) !important;
             transition: left 0.3s ease !important;
             z-index: 1000 !important;
@@ -58,15 +58,15 @@ const Layout = ({ children }) => {
         @media (min-width: 769px) {
           aside.sidebar {
             position: fixed !important;
-            top: ${HEADER_HEIGHT}px !important; /* below header */
+            top: ${header_height}px !important; /* below header */
             left: 0 !important;
-            width: ${SIDEBAR_WIDTH}px !important;
-            height: calc(100vh - ${HEADER_HEIGHT}px) !important;
+            width: ${sidebar_width}px !important;
+            height: calc(100vh - ${header_height}px) !important;
             box-shadow: none !important;
             z-index: 999;
           }
           main {
-            margin-left: ${SIDEBAR_WIDTH}px !important;
+            margin-left: ${sidebar_width}px !important;
           }
           .menu-toggle-btn {
             display: none !important;
