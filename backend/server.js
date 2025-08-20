@@ -4,7 +4,7 @@ const connectDB = require('./src/config/db');
 
 const PORT = process.env.PORT || 4000;
 
-connectDB(process.env.MONGO_URI || 'mongodb://localhost:27017/rbac_dashboard').then(() => {
+connectDB(process.env.MONGO_URI).then(() => {
   app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
   });
