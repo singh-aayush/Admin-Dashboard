@@ -14,7 +14,7 @@ const Dashboard = () => {
     adminData: null,
   });
 
-  // Fetch stats only for admin
+  // Fetch stats only for admin 
   useEffect(() => {
     if (user?.role === "admin") {
       const fetchStats = async () => {
